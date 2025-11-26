@@ -1,15 +1,15 @@
-# /dev/tarot
-## a virtual file driver to create a device /dev/tarot
+# /dev/myself
+## a virtual file driver to create a device /dev/myself
 
 ### quick start
 
 when installed, running:
 ```bash
-cat /dev/tarot
+sudo cat /dev/myself
 ```
 or
 ```bash
-sudo head -c 4 /dev/tarot
+sudo head -c 4 /dev/myself
 ```
 
 prints stream of random tarot cards:
@@ -28,8 +28,8 @@ card formatting:
 download file and generate keys
 
 ```bash
-git clone https://github.com/i2097i/dev_tarot.git dev_tarot # 1 download
-cd dev_tarot
+git clone https://github.com/arowmancy/dev_myself.git dev_myself # 1 download
+cd dev_myself
 sudo make key     # 2 generate key for signing
 sudo reboot now   # 3 reboot and enable MOK
   # 1. a blue screen (MOK manager) will appear
@@ -52,7 +52,7 @@ in case you want a fast development life cycle, here is how to load module once
 make build        # 4 compile
 sudo make sign    # 5 sign driver module to permit MOK enforcement (security)
 sudo make user_load    # 6 load
-sudo make user_create  # 7 create /dev/tarot
+sudo make user_create  # 7 create /dev/myself
 make test         # 8 test if all is ok
 ```
 
@@ -64,9 +64,9 @@ as usual, to clean your work, run `sudo make clean`
 ```bash
 # installed modules, see #7
 lsmod  # list modules
-sudo modprobe tarot  # load tarot driver => creates /dev/tarot
+sudo modprobe myself  # load myself driver => creates /dev/myself
 sudo depmod  # re-create the module dependency list
-sudo modprobe -r tarot  # load tarot driver => removes /dev/tarot
+sudo modprobe -r myself  # load myself driver => removes /dev/myself
 
 # keys
 sudo mokutil --list-new  # list key that will be added at boot
@@ -75,9 +75,9 @@ sudo cat /proc/keys  # view your installed keys
 dmesg -wH  # kernel log like tail -f
 
 # cheats
-sudo modprobe -r tarot && \
+sudo modprobe -r myself && \
 sudo make full && \
-watch -n 1 sudo head -c 4 /dev/tarot # update and run
+watch -n 1 sudo head -c 4 /dev/myself # update and run
 ```
 
 ### source
@@ -90,5 +90,5 @@ watch -n 1 sudo head -c 4 /dev/tarot # update and run
 
 ### licence
 
-this project, dev_tarot, is licensed under the [GPL v2.0 or later](https://spdx.org/licenses/GPL-2.0-or-later.html)
+this project, dev_myself, is licensed under the [GPL v2.0 or later](https://spdx.org/licenses/GPL-2.0-or-later.html)
 copyright &copy; 2025 scot reichman (https://github.com/i2097i)

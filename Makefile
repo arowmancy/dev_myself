@@ -1,6 +1,6 @@
 # see: https://stackoverflow.com/questions/15910064/how-to-compile-a-linux-kernel-module-using-std-gnu99
 
-TARGET_MODULE := tarot
+TARGET_MODULE := myself
 
 # permit a user-defined kernel version with the KVER variable (#6)
 KVER ?= $(shell uname -r)
@@ -26,7 +26,6 @@ all: build
 
 
 full: \
-	check \
 	build \
 	sign \
 	install \
@@ -40,20 +39,22 @@ clean: \
 
 key:
 	@$(call title, "creating keys")
-	openssl req -new -x509 -newkey rsa:2048 -days 36500 -keyout MOK.priv -outform DER -out MOK.der -nodes -subj "/CN=TinmarinoUnsafe/"
-	#
-	# TODO: backup if there is one key
-	cp MOK.der $(BUILDSYSTEM_DIR)/certs/signing_key.x509
-	cp MOK.priv $(BUILDSYSTEM_DIR)/certs/signing_key.pem
-	#
+	@if [ ! -f "$(BUILDSYSTEM_DIR)/certs/signing_key.x509" ] || [ ! -f "$(BUILDSYSTEM_DIR)/certs/signing_key.pem" ]; then \
+		openssl req -new -x509 -newkey rsa:2048 -days 36500 -keyout MOK_MYSELF.priv -outform DER -out MOK_MYSELF.der -nodes -subj "/CN=i2097i-unsafe/"; \
+		cp MOK_MYSELF.der $(BUILDSYSTEM_DIR)/certs/signing_key.x509; \
+		cp MOK_MYSELF.priv $(BUILDSYSTEM_DIR)/certs/signing_key.pem; \
+	else \
+		cp $(BUILDSYSTEM_DIR)/certs/signing_key.x509 MOK_MYSELF.der; \
+		cp $(BUILDSYSTEM_DIR)/certs/signing_key.pem MOK_MYSELF.priv; \
+	fi
 	@echo "\e[31;1mplease enter a password you will be asked for on reboot:\e[0m"
-	mokutil --import MOK.der
+	mokutil --import MOK_MYSELF.der
 	@echo "\e[31;1mnow you must: 1/ reboot, 2/ select 'Unroll MOK', 3/ enter password you previously gave\e[0m"
 	@echo
 
 check:
 	@$(call title, "checking")
-	@if [ ! -f MOK.der ] || [ ! -f MOK.priv ]; then \
+	@if [ ! -f MOK_MYSELF.der ] || [ ! -f MOK_MYSELF.priv ]; then \
 		echo -n '\e[31m'; \
 		echo 'error: you must create keys before'; \
 		echo 'tip: run: make key'; \
@@ -77,7 +78,7 @@ unbuild:
 sign:
 	@$(call title, "signing with the generated self-signed keys")
 	cp $(TARGET_MODULE).ko $(TARGET_MODULE).ko.bck
-	/usr/src/linux-headers-$(shell uname -r)/scripts/sign-file sha256 MOK.priv MOK.der $(TARGET_MODULE).ko
+	/usr/src/linux-headers-$(shell uname -r)/scripts/sign-file sha256 MOK_MYSELF.priv MOK_MYSELF.der $(TARGET_MODULE).ko
 	@echo
 
 install:
@@ -109,7 +110,7 @@ local_unload:
 
 create:
 	# Not required since (#8 from Dreirund) as load is doing it
-	@$(call title, "creating node device /dev/tarot")
+	@$(call title, "creating node device /dev/myself")
 	mknod /dev/$(TARGET_MODULE) c $(shell cat /proc/devices | grep $(TARGET_MODULE)$ | cut -d ' ' -f1) 0
 	@echo
 
