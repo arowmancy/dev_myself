@@ -1,9 +1,9 @@
 /*
  *  generate.c
  *
- *  dev_tarot - a linux module for tarot.
+ *  dev_myself - a linux module for myself.
  *
- *      provides a character device driver at /dev/tarot.
+ *      provides a character device driver at /dev/myself.
  *
  *      adapted from https://github.com/tinmarino/dev_one.
  *
@@ -87,7 +87,7 @@ static ssize_t device_file_read(
     // kernel logging
     char card[7];
     sprintf(card, "%c%c%d", orientation_char, suite_char, card_number);
-    printk(KERN_NOTICE "[tarot]: filling %zu bytes with %s (%d times)\n", count, card, total_cards);
+    printk(KERN_NOTICE "[myself]: filling %zu bytes with %s (%d times)\n", count, card, total_cards);
 
     char res = copy_to_user(user_buffer, ptr, count);
     if (res != 0) {

@@ -12,5 +12,5 @@
 *.priv
 *.der
 
-# .tarot
-*.tarot
+# .myself
+*.myself

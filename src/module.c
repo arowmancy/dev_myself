@@ -2,9 +2,9 @@
 /*
  *  module.c
  *
- *  dev_tarot - a linux module for tarot.
+ *  dev_myself - a linux module for myself.
  *
- *      provides a character device driver at /dev/tarot.
+ *      provides a character device driver at /dev/myself.
  *
  *      adapted from https://github.com/tinmarino/dev_one.
  *
@@ -35,44 +35,44 @@ static struct file_operations simple_driver_fops = {
 int register_device(void) {
     int res = 0;
     // hi
-    printk(KERN_NOTICE "[tarot]: function register_device is called.\n" );
+    printk(KERN_NOTICE "[myself]: function register_device is called.\n" );
 
     // allocate memory
     // this used to be as follows before auto-createdevice (#8)
     // --  res = register_chrdev( 0, device_name, &simple_driver_fops )
     res = alloc_chrdev_region(&first, first_minor, device_count, device_name);
     if( res != 0 ) {
-        printk(KERN_WARNING "[tarot]: can\'t register character device with error code = %i\n", res );
+        printk(KERN_WARNING "[myself]: can\'t register character device with error code = %i\n", res );
         return res;
     }
     device_file_major_number = MAJOR(first);
-    printk(KERN_NOTICE "[tarot]: has registered character device with major number = %i and minor numbers %i..%i\n", device_file_major_number, first_minor, first_minor+device_count );
+    printk(KERN_NOTICE "[myself]: has registered character device with major number = %i and minor numbers %i..%i\n", device_file_major_number, first_minor, first_minor+device_count );
 
     // create sysfs information:
-    printk(KERN_NOTICE "[tarot]: creating device class\n" );
-    if ((cl = class_create("chardrv")) == NULL) {
-        printk(KERN_ALERT "[tarot]: device class creation failed\n" );
+    printk(KERN_NOTICE "[myself]: creating device class\n" );
+    if ((cl = class_create(device_name)) == NULL) {
+        printk(KERN_ALERT "[myself]: device class creation failed\n" );
         unregister_chrdev_region(first, 1);
         return -1;
     }
 
     // create device
-    printk(KERN_NOTICE "[tarot]: creating device\n" );
+    printk(KERN_NOTICE "[myself]: creating device\n" );
     if (device_create(cl, NULL, first, NULL, device_name) == NULL) {
-        printk(KERN_ALERT "[tarot]: device creation failed\n" );
+        printk(KERN_ALERT "[myself]: device creation failed\n" );
         class_destroy(cl);
         unregister_chrdev_region(first, 1);
         return -1;
     }
 
     // init device
-    printk(KERN_NOTICE "[tarot]: initialising device\n" );
+    printk(KERN_NOTICE "[myself]: initialising device\n" );
     cdev_init(&c_dev, &simple_driver_fops);
 
     // register device
-    printk(KERN_ALERT "[tarot]: adding device\n" );
+    printk(KERN_ALERT "[myself]: adding device\n" );
     if (cdev_add(&c_dev, first, 1) == -1) {
-        printk(KERN_ALERT "[tarot]: device addition failed\n" );
+        printk(KERN_ALERT "[myself]: device addition failed\n" );
         device_destroy(cl, first);
         class_destroy(cl);
         unregister_chrdev_region(first, 1);
@@ -80,26 +80,26 @@ int register_device(void) {
     }
 
     // bye
-    printk(KERN_NOTICE "[tarot]: function register_device is returning\n" );
+    printk(KERN_NOTICE "[myself]: function register_device is returning\n" );
     return 0;
 }
 
 void unregister_device(void) {
-    printk(KERN_NOTICE "[tarot]: function unregister_device is called\n" );
+    printk(KERN_NOTICE "[myself]: function unregister_device is called\n" );
 
     // destroy sysfs information:
-    printk(KERN_NOTICE "[tarot]: deleting device\n" );
+    printk(KERN_NOTICE "[myself]: deleting device\n" );
     cdev_del(&c_dev);
-    printk(KERN_NOTICE "[tarot]: destroying device\n" );
+    printk(KERN_NOTICE "[myself]: destroying device\n" );
     device_destroy(cl, first);
-    printk(KERN_NOTICE "[tarot]: destroying device class\n" );
+    printk(KERN_NOTICE "[myself]: destroying device class\n" );
     class_destroy(cl);
 
     if(device_file_major_number != 0) {
         unregister_chrdev_region(first, device_count);
     }
 
-    printk(KERN_NOTICE "[tarot]: function unregister_device is returning\n" );
+    printk(KERN_NOTICE "[myself]: function unregister_device is returning\n" );
 }
 
 static int mod_init(void) {
