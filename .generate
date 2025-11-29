@@ -1,7 +1,7 @@
 #! /bin/bash
 
 if [[ -z "$OUT" ]]; then
-  OUT="."
+  OUT=$(dirname "${BASH_SOURCE[0]}")
 fi
 
 # /dev/myself output regex

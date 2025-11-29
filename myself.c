@@ -8,5 +8,4 @@
  *      adapted from https://github.com/tinmarino/dev_one.
  *
  */
-static const char device_name[] = "myself";
 #include "src/module.c"

@@ -1,0 +1,1 @@
+ACTION=="add", KERNEL=="myself", SUBSYSTEM=="myself_cls", MODE="0777"

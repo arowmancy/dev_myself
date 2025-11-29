@@ -10,6 +10,9 @@
  *
  */
 
+#define DEVICE_NAME "myself"
+#define CLASS_NAME "myself_cls"
+
 #include <linux/init.h>
 #include <linux/vmalloc.h>
 #include <linux/cdev.h>
@@ -22,7 +25,7 @@ void unregister_device(void);
 
 static dev_t first; // global variable for the first device number (major and minor)
 static const unsigned int first_minor = 1; // the first minor number we want to request (needs to be between 1 ans 254)
-static const unsigned int device_count = 78; // the number of devices we want to support. make sure that first_minor + device_count <= 254.
+static const unsigned int device_count = 77; // the number of devices we want to support. make sure that first_minor + device_count <= 254.
 static struct cdev c_dev; // global variable for the character device structure
 static struct class *cl; // global variable for the device class
 static int device_file_major_number = 0;
@@ -39,8 +42,8 @@ int register_device(void) {
 
     // allocate memory
     // this used to be as follows before auto-createdevice (#8)
-    // --  res = register_chrdev( 0, device_name, &simple_driver_fops )
-    res = alloc_chrdev_region(&first, first_minor, device_count, device_name);
+    // --  res = register_chrdev( 0, DEVICE_NAME, &simple_driver_fops )
+    res = alloc_chrdev_region(&first, first_minor, device_count, DEVICE_NAME);
     if( res != 0 ) {
         printk(KERN_WARNING "[myself]: can\'t register character device with error code = %i\n", res );
         return res;
@@ -50,7 +53,7 @@ int register_device(void) {
 
     // create sysfs information:
     printk(KERN_NOTICE "[myself]: creating device class\n" );
-    if ((cl = class_create(device_name)) == NULL) {
+    if ((cl = class_create(CLASS_NAME)) == NULL) {
         printk(KERN_ALERT "[myself]: device class creation failed\n" );
         unregister_chrdev_region(first, 1);
         return -1;
@@ -58,7 +61,7 @@ int register_device(void) {
 
     // create device
     printk(KERN_NOTICE "[myself]: creating device\n" );
-    if (device_create(cl, NULL, first, NULL, device_name) == NULL) {
+    if (device_create(cl, NULL, first, NULL, DEVICE_NAME) == NULL) {
         printk(KERN_ALERT "[myself]: device creation failed\n" );
         class_destroy(cl);
         unregister_chrdev_region(first, 1);
@@ -114,6 +117,8 @@ static void mod_exit(void) {
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR (AUTHOR);
+MODULE_DESCRIPTION("a linux module for myself.");
+MODULE_VERSION("1.0.0");
 
 // declare register and unregister command
 module_init(mod_init);
