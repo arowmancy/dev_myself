@@ -29,13 +29,12 @@ full: \
 	build \
 	sign \
 	install \
-	load \
-	test
+	load
 
 clean: \
 	unbuild \
-	uninstall \
-	delete
+	delete \
+	unload
 
 key:
 	@$(call title, "creating keys")
@@ -89,7 +88,7 @@ install:
 
 uninstall:
 	@$(call title, "removing system binary")
-	rm $(EXTRA_DIR)/$(TARGET_MODULE).ko
+	rm $(PWD)/$(TARGET_MODULE).ko
 	@echo
 
 load:

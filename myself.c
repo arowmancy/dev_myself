@@ -8,4 +8,6 @@
  *      adapted from https://github.com/tinmarino/dev_one.
  *
  */
-#include "src/module.c"
+static const char device_n[] = "myself";
+static const char class_n[] = "myself_cls";
+#include "generator/module.c"

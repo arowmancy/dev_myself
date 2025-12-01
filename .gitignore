@@ -12,5 +12,6 @@
 *.priv
 *.der
 
-# .myself
-*.myself
+# .tarot
+*.tarot
+generator
